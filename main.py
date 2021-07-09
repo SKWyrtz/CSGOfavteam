@@ -1,12 +1,13 @@
 import itertools
 import tkinter as tk
 from tkinter import font
-from tkinter.constants import Y
+import os
 
 text_file = open("teams(short).txt",  "r")
 lines = text_file.read()
 lines = lines.splitlines()
 teams_dict = dict.fromkeys(lines, 0)
+rows = len(teams_dict)+3
 combinations = list(itertools.combinations(teams_dict, 2))
 comparisons_done = 0
 
@@ -19,21 +20,32 @@ for i in combinations:
 print(f"length of combinations: {combinations_lenght}")
 
 def generate_GUI(root):
-    global instructions, team1_label, team2_label, team1_btn, team2_btn
+    global instructions, team1_label, team2_label, team1_btn, team2_btn, comparisons_left_text
 
     canvas = tk.Canvas(root, width=800, height=300, bg=bg_colour)
-    canvas.grid(columnspan=2, rowspan=len(teams_dict)+3)
+    canvas.grid(columnspan=2, rowspan=rows)
 
+    #Instructions background
     frame = tk.Frame(root, height=75, width=800, bg=accent_colour)
     frame.grid(columnspan=3, column=0, row=0)
     frame.pack_propagate(False) 
     frame.update()
+
+    #Instructions
     instructions = tk.Label(frame, text="Select your favorite team of the two", font=("Raleway", 18), fg='white', bg=accent_colour )
     instructions.place(x=400, y=35, anchor='center')
 
+    #Restart Button
+    restart_btn_text = tk.StringVar()
+    restart_btn_text.set("Restart")
+    restart_btn = tk.Button(root, textvariable=restart_btn_text, command=lambda:restart())
+    restart_btn.place(x=75, y=40, anchor='center')
+
+    #Team1 label
     team1_label =tk.Label(root, text=combinations[0][0], font=("Raleway", 35, font.BOLD), fg='white', bg=bg_colour)
     team1_label.grid(column=0, row=1)
 
+    #Team2 label
     team2_label =tk.Label(root, text=combinations[0][1], font=("Raleway", 35, font.BOLD), fg='white', bg=bg_colour)
     team2_label.grid(column=1, row=1)
 
@@ -57,10 +69,20 @@ def generate_GUI(root):
                             command=lambda:favorite_selected(2, team1_label, team2_label))
     team2_btn.grid(column=1, row=2)
 
+    #Team1 label
+    comparisons_left_text = tk.Label(root, text=f"Comparisons left: {combinations_lenght}", font=("Raleway", 18), fg='white', bg=bg_colour)
+    comparisons_left_text.place(x=400, y=250, anchor='center')
+
 def favorite_selected(team_selected, team_label1, team_label2): 
     global comparisons_done
+    if combinations_lenght-1 == comparisons_done:
+        show_result()
+    else:
+        update_gui(team_selected, team_label1, team_label2)
 
-    if not combinations_lenght == comparisons_done:
+def update_gui(team_selected, team_label1, team_label2):
+        global comparisons_done
+
         print(f"Comparisons done are now: {comparisons_done}")
         team = combinations[comparisons_done][team_selected-1]
         print(f"The team selected is: {team}")
@@ -71,12 +93,15 @@ def favorite_selected(team_selected, team_label1, team_label2):
             next_team2 = combinations[comparisons_done + 1][1]
             team_label1.config(text=next_team1)
             team_label2.config(text=next_team2)
+            comparisons_left_text.config(text=f"Comparisons left: {combinations_lenght-(comparisons_done+1)}")
         comparisons_done += 1
-    else:
+
+def show_result():
         team1_label.destroy()
         team2_label.destroy()
         team1_btn.destroy()
         team2_btn.destroy()
+        comparisons_left_text.destroy()
         instructions.config(text="Here is the results:")
 
         sorted_teams = sorted(teams_dict.items(), key=lambda x:x[1], reverse=True)
@@ -84,6 +109,23 @@ def favorite_selected(team_selected, team_label1, team_label2):
             team_label =tk.Label(root, text=element)
             team_label.grid(columnspan=3, column=0, row=index+1)
             print(element)
+            if index == len(sorted_teams)-1:
+                print("Works")
+                #Export Result Button
+                export_res_btn_text = tk.StringVar()
+                export_res_btn_text.set("Export Result")
+                export_res_btn = tk.Button(root, 
+                                        textvariable=export_res_btn_text,
+                                        font=("Raleway"),
+                                        command=lambda:export_result())
+                export_res_btn.place(x=75, y=270, anchor='center')
+
+def export_result():
+    print("watvere")
+
+def restart():
+    root.destroy()
+    os.startfile("main.py")
     
 if __name__ == '__main__':
     root = tk.Tk()
