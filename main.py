@@ -121,7 +121,8 @@ def show_result():
                 export_res_btn.place(x=75, y=270, anchor='center')
 
 def export_result():
-    print("watvere")
+    try:
+        f = open()
 
 def restart():
     root.destroy()
