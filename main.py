@@ -35,7 +35,6 @@ def import_data():
         combinations_lenght += 1
     print(f"length of combinations: {combinations_lenght}")
 
-
 def generate_GUI(root):
     global instructions, team1_label, team2_label, team1_btn, team2_btn, comparisons_left_text
 
@@ -75,6 +74,7 @@ def generate_GUI(root):
                         width=8,
                         command=lambda:favorite_selected(1, team1_label, team2_label))
     team1_btn.grid(column=0, row=2)
+    root.bind("<a>", team2_press)
 
     #Team2 Button
     team2_btn_text = tk.StringVar()
@@ -85,10 +85,21 @@ def generate_GUI(root):
                             width=8,
                             command=lambda:favorite_selected(2, team1_label, team2_label))
     team2_btn.grid(column=1, row=2)
+    root.bind("<s>", team2_press)
 
-    #Team1 label
     comparisons_left_text = tk.Label(root, text=f"Comparisons left: {combinations_lenght}", font=("Raleway", 18), fg='white', bg=bg_colour)
     comparisons_left_text.place(x=290, y=250)
+
+def team1_press(e=None):
+    #CHECK IF DONE
+    print("Test")
+    favorite_selected(1, team1_label, team2_label)
+
+
+def team2_press(e=None):
+    print("Test")
+    favorite_selected(2, team1_label, team2_label)
+
 
 def favorite_selected(team_selected, team_label1, team_label2): 
     global comparisons_done
