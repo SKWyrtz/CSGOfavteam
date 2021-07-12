@@ -7,6 +7,7 @@ import argparse
 comparisons_done = 0
 bg_colour ='#0e1f2e'
 accent_colour = '#073957'
+is_done = False
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -74,7 +75,7 @@ def generate_GUI(root):
                         width=8,
                         command=lambda:favorite_selected(1, team1_label, team2_label))
     team1_btn.grid(column=0, row=2)
-    root.bind("<a>", team2_press)
+    root.bind("<a>", team1_press)
 
     #Team2 Button
     team2_btn_text = tk.StringVar()
@@ -85,21 +86,17 @@ def generate_GUI(root):
                             width=8,
                             command=lambda:favorite_selected(2, team1_label, team2_label))
     team2_btn.grid(column=1, row=2)
-    root.bind("<s>", team2_press)
+    root.bind("<s>", team1_press)
 
     comparisons_left_text = tk.Label(root, text=f"Comparisons left: {combinations_lenght}", font=("Raleway", 18), fg='white', bg=bg_colour)
     comparisons_left_text.place(x=290, y=250)
 
-def team1_press(e=None):
-    #CHECK IF DONE
-    print("Test")
-    favorite_selected(1, team1_label, team2_label)
-
-
-def team2_press(e=None):
-    print("Test")
-    favorite_selected(2, team1_label, team2_label)
-
+def team1_press(event=None):
+    if not is_done:
+        if event.keysym == "a":
+            favorite_selected(1, team1_label, team2_label)
+        if event.keysym == "s":
+            favorite_selected(2, team1_label, team2_label)
 
 def favorite_selected(team_selected, team_label1, team_label2): 
     global comparisons_done
@@ -122,6 +119,9 @@ def update_gui(team_selected, team_label1, team_label2):
         comparisons_done += 1
 
 def show_result():
+        global is_done
+
+        is_done = True
         team1_label.destroy()
         team2_label.destroy()
         team1_btn.destroy()
