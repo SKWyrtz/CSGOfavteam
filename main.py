@@ -1,7 +1,9 @@
 import itertools
 import tkinter as tk
 from tkinter import font
+from datetime import date
 import os
+import json
 
 text_file = open("teams(short).txt",  "r")
 lines = text_file.read()
@@ -97,6 +99,8 @@ def update_gui(team_selected, team_label1, team_label2):
         comparisons_done += 1
 
 def show_result():
+        global sorted_teams
+
         team1_label.destroy()
         team2_label.destroy()
         team1_btn.destroy()
@@ -121,8 +125,13 @@ def show_result():
                 export_res_btn.place(x=75, y=270, anchor='center')
 
 def export_result():
+    today = date.today()
+    date_as_string = today.strftime("%d/%m/%Y")
     try:
-        f = open()
+        f = open(date_as_string, "w")
+        json.dump(sorted_teams, f)
+    except Exception as e:
+        print(e)
 
 def restart():
     root.destroy()
