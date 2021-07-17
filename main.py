@@ -5,6 +5,7 @@ from datetime import date
 import os
 import json
 import argparse
+import webscrabe
 
 comparisons_done = 0
 bg_colour ='#0e1f2e'
@@ -24,9 +25,13 @@ args = parser.parse_args()
 def import_data():
     global teams_dict, wanted_rows, combinations, combinations_lenght
 
+    '''
     text_file = open("teams.txt",  "r")
     lines = text_file.read()
     lines = lines.splitlines()
+    '''
+    
+    lines = webscrabe.get_top30_team_names()
     teams_dict = dict.fromkeys(lines[0:args.teams], 0)
 
     wanted_rows = len(teams_dict)+3
@@ -151,12 +156,14 @@ def show_result():
 def export_result():
     today = date.today()
     date_as_string = today.strftime("%d/%m/%Y")
+    date_as_string = date_as_string.replace("/","-")
+
     try:
-        f = open(date_as_string, "w")
+        f = open(date_as_string + ".json", "w")
         json.dump(sorted_teams, f)
     except Exception as e:
         print(e)
-        
+
 def restart():
     root.destroy()
     os.startfile("main.py")
